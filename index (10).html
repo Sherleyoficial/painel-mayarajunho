@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mayara Miranda Academia — Painel de Gestão</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8F7F4;--bg2:#F1F4F2;--card:#FFFFFF;
+  --ink:#20242A;--ink2:#303741;--muted:#697280;--soft:#98A2B3;
+  --line:#E6E4DF;--line2:#EEF0EA;
+  --teal:#007C78;--teal2:#0A8F86;--tealDark:#075E56;--tealSoft:#E5F5F2;
+  --mag:#C0265C;--mag2:#D44472;--magSoft:#FBE8F0;
+  --green:#11845B;--greenSoft:#EAF8F0;
+  --amber:#B7791F;--amberSoft:#FFF5DA;
+  --red:#C2413A;--redSoft:#FDECEC;
+  --shadow:0 20px 60px rgba(16,24,40,.08);
+  --r:24px;--r2:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  min-height:100vh;
+  font-family:"Manrope",system-ui,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 5% 10%,rgba(0,124,120,.09),transparent 28%),
+    radial-gradient(circle at 92% 5%,rgba(192,38,92,.08),transparent 26%),
+    linear-gradient(135deg,#fff 0%,var(--bg) 52%,#F4F9F7 100%);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.bg-mark{position:fixed;inset:0;pointer-events:none;opacity:.55;overflow:hidden;z-index:-1}
+.bg-mark:before{content:"";position:absolute;top:40px;left:-80px;width:240px;height:240px;border:1px solid rgba(0,124,120,.22);border-radius:50%}
+.bg-mark:after{content:"";position:absolute;right:-140px;bottom:-100px;width:340px;height:340px;border:1px solid rgba(192,38,92,.16);border-radius:50%}
+
+.header{text-align:center;padding:24px 20px 0}
+.brand-title{font-size:20px;font-weight:800;letter-spacing:6px;color:var(--tealDark);text-transform:uppercase}
+.brand-sub{font-size:11px;font-weight:800;letter-spacing:5px;color:var(--mag);text-transform:uppercase;margin-top:3px}
+
+.sticky-nav{
+  position:sticky;top:0;z-index:20;
+  display:flex;justify-content:center;gap:4px;
+  padding:7px;border:1px solid var(--line);border-radius:999px;
+  background:rgba(255,255,255,.82);backdrop-filter:blur(14px);
+  box-shadow:0 8px 24px rgba(16,24,40,.05);
+  margin:18px 20px 0;
+}
+.tab{border:0;background:transparent;padding:11px 20px;border-radius:999px;color:var(--muted);font-size:13px;font-weight:800;cursor:pointer;transition:.18s;font-family:"Manrope",sans-serif}
+.tab:hover{color:var(--ink)}
+.tab.active{background:linear-gradient(135deg,var(--teal),var(--teal2));color:#fff;box-shadow:0 8px 22px rgba(0,124,120,.2)}
+
+.page{max-width:860px;margin:0 auto;padding:22px 20px 56px}
+.section{display:none}.section.active{display:block}
+
+.card{background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:var(--r);padding:22px;box-shadow:0 6px 20px rgba(16,24,40,.04);margin-bottom:16px}
+.card-label{color:var(--soft);font-size:10px;letter-spacing:1.6px;font-weight:800;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-label .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.card p{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:8px}
+.card p:last-child{margin-bottom:0}
+
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.kpi-item{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r2);padding:16px}
+.kpi-label-s{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px}
+.kpi-input{
+  width:100%;background:transparent;border:none;
+  font-family:"Manrope",sans-serif;font-size:30px;font-weight:800;
+  color:var(--ink);outline:none;
+  -moz-appearance:textfield;
+}
+.kpi-input::-webkit-outer-spin-button,
+.kpi-input::-webkit-inner-spin-button{-webkit-appearance:none}
+.kpi-sub{font-size:10px;color:var(--soft);margin-top:4px}
+.kpi-sub input{
+  background:transparent;border:none;border-bottom:1px solid var(--line);
+  color:var(--muted);font-size:10px;width:28px;outline:none;text-align:center;
+  font-family:"Manrope",sans-serif;
+}
+
+/* Campo estagiário — destaque especial */
+.kpi-item.estagiario{border:1.5px solid var(--mag);background:var(--magSoft)}
+.kpi-item.estagiario .kpi-label-s{color:var(--mag)}
+
+.sem{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:var(--r2);border:1px solid var(--line);margin-bottom:10px}
+.sem:last-child{margin-bottom:0}
+.sem-icon{font-size:18px;flex-shrink:0}
+.sem-info{flex:1}
+.sem-name{font-size:13px;font-weight:800}
+.sem-detail{font-size:11px;color:var(--muted);margin-top:1px}
+.sem-val{font-size:18px;font-weight:800;letter-spacing:-.5px}
+.sem-badge{font-size:10px;font-weight:800;display:block;margin-top:2px;text-align:right}
+.sem.green{background:var(--greenSoft);border-color:rgba(17,132,91,.15)}
+.sem.green .sem-name,.sem.green .sem-val{color:var(--green)}
+.sem.amber{background:var(--amberSoft);border-color:rgba(183,121,31,.15)}
+.sem.amber .sem-name,.sem.amber .sem-val{color:var(--amber)}
+.sem.red{background:var(--redSoft);border-color:rgba(194,65,58,.15)}
+.sem.red .sem-name,.sem.red .sem-val{color:var(--red)}
+
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 12px;font-size:11px;font-weight:800}
+.badge.green{background:var(--greenSoft);color:var(--green);border:1px solid rgba(17,132,91,.13)}
+.badge.teal{background:var(--tealSoft);color:var(--tealDark);border:1px solid rgba(0,124,120,.14)}
+.badge.amber{background:var(--amberSoft);color:var(--amber);border:1px solid rgba(183,121,31,.14)}
+.badge.mag{background:var(--magSoft);color:var(--mag);border:1px solid rgba(192,38,92,.14)}
+.badge.red{background:var(--redSoft);color:var(--red);border:1px solid rgba(194,65,58,.14)}
+
+.field-group{margin-bottom:14px}
+.field-label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px}
+.field-select,.field-input,.field-textarea{
+  width:100%;background:var(--bg2);border:1px solid var(--line);
+  border-radius:var(--r2);color:var(--ink);
+  font-family:"Manrope",sans-serif;font-size:14px;font-weight:500;
+  padding:12px 14px;outline:none;transition:border-color .2s;
+  appearance:none;-webkit-appearance:none;
+}
+.field-select:focus,.field-input:focus,.field-textarea:focus{border-color:var(--teal)}
+
+.msg-box{
+  background:var(--bg2);border:1px solid var(--line);border-radius:var(--r2);
+  padding:16px;font-size:14px;line-height:1.7;color:var(--ink);
+  white-space:pre-line;min-height:120px;
+}
+.msg-box.empty{color:var(--soft);font-style:italic}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border:none;border-radius:var(--r2);font-family:"Manrope",sans-serif;
+  font-size:13px;font-weight:800;cursor:pointer;padding:12px 20px;
+  transition:.18s;width:100%;
+}
+.btn-primary{background:linear-gradient(135deg,var(--teal),var(--teal2));color:#fff;box-shadow:0 8px 20px rgba(0,124,120,.18)}
+.btn-primary:hover{box-shadow:0 12px 28px rgba(0,124,120,.28)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.btn-ghost:hover{color:var(--ink);border-color:var(--teal)}
+.btn-green{background:var(--greenSoft);color:var(--green);border:1px solid rgba(17,132,91,.2)}
+.btn-mag{background:var(--magSoft);color:var(--mag);border:1px solid rgba(192,38,92,.2)}
+.btn-sm{width:auto;padding:9px 16px;font-size:12px}
+
+.copy-wrap{position:relative}
+.copy-toast{
+  position:absolute;top:-34px;right:0;
+  background:var(--green);color:#fff;
+  font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px;
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.copy-toast.show{opacity:1}
+
+.calc-hero{
+  background:linear-gradient(135deg,var(--tealDark),#087C73);
+  color:#fff;border-radius:var(--r);padding:24px;
+  box-shadow:0 12px 30px rgba(7,94,86,.16);margin-bottom:16px;
+}
+.calc-big{font-size:48px;font-weight:800;letter-spacing:-2px;line-height:1}
+.calc-hero .sub{font-size:13px;color:rgba(255,255,255,.75);margin-top:4px}
+.calc-hero .note{font-size:12px;color:rgba(255,255,255,.65);margin-top:12px;padding:10px 14px;background:rgba(255,255,255,.1);border-radius:12px}
+.calc-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.calc-mini{background:rgba(255,255,255,.12);border-radius:14px;padding:14px;text-align:center}
+.calc-mini-val{font-size:22px;font-weight:800;letter-spacing:-1px}
+.calc-mini-label{font-size:10px;color:rgba(255,255,255,.65);margin-top:3px}
+
+input[type=range]{
+  width:100%;height:5px;appearance:none;
+  background:var(--line);border-radius:3px;outline:none;margin:8px 0;
+}
+input[type=range]::-webkit-slider-thumb{
+  appearance:none;width:20px;height:20px;border-radius:50%;
+  background:var(--teal);cursor:pointer;
+  box-shadow:0 0 0 4px var(--tealSoft);
+}
+.range-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--soft);margin-top:2px}
+
+.divider{height:1px;background:var(--line);margin:14px 0}
+
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--soft);padding:0 0 10px;text-align:left}
+.tbl td{padding:10px 0;border-bottom:1px solid var(--line2);color:var(--muted);font-weight:600}
+.tbl td:first-child{color:var(--ink);font-weight:700}
+.tbl td:last-child{text-align:right}
+.tbl tr:last-child td{border-bottom:0}
+
+.risco-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line2)}
+.risco-item:last-child{border-bottom:0}
+.risco-name{font-size:13px;font-weight:700;color:var(--ink)}
+.risco-meta{font-size:11px;color:var(--muted);margin-top:1px}
+
+.hist-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line2);flex-wrap:wrap}
+.hist-item:last-child{border-bottom:0}
+.hist-date{font-size:11px;color:var(--soft);width:70px;flex-shrink:0}
+
+.nota{padding:14px 16px;border-radius:var(--r2);font-size:13px;line-height:1.65;margin-top:12px}
+.nota.green{background:var(--greenSoft);color:var(--green)}
+.nota.amber{background:var(--amberSoft);color:var(--amber)}
+.nota.red{background:var(--redSoft);color:var(--red)}
+.nota.teal{background:var(--tealSoft);color:var(--tealDark)}
+.nota.mag{background:var(--magSoft);color:var(--mag)}
+
+.footer{text-align:center;padding:28px 20px 12px;font-size:12px;color:var(--muted)}
+.footer b{color:var(--tealDark)}
+.footer-line{width:min(500px,88%);height:1px;background:linear-gradient(90deg,transparent,rgba(0,124,120,.34),rgba(192,38,92,.30),transparent);margin:0 auto 16px}
+
+.flex{display:flex;gap:8px}
+.flex-1{flex:1}
+.mt8{margin-top:8px}
+.mt12{margin-top:12px}
+.mt16{margin-top:16px}
+
+/* Checklist estagiário */
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--line2);cursor:pointer}
+.check-item:last-child{border-bottom:0}
+.check-box{width:20px;height:20px;border:2px solid var(--line);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.15s;margin-top:1px}
+.check-item.done .check-box{background:var(--green);border-color:var(--green);color:#fff}
+.check-text{font-size:13px;color:var(--ink);line-height:1.5}
+.check-item.done .check-text{color:var(--soft);text-decoration:line-through}
+.check-week{font-size:10px;font-weight:800;color:var(--mag);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;margin-top:14px}
+
+@media(max-width:600px){
+  .kpi-grid{grid-template-columns:1fr 1fr}
+  .calc-grid3{grid-template-columns:1fr 1fr}
+  .sticky-nav{justify-content:flex-start;overflow-x:auto;border-radius:20px;margin:14px 12px 0}
+  .tab{padding:10px 14px;font-size:12px;white-space:nowrap}
+  .page{padding:16px 14px 48px}
+  .flex{flex-direction:column}
+  .btn-sm{width:100%}
+}
+</style>
+</head>
+<body>
+<div class="bg-mark"></div>
+
+<div class="header">
+  <div class="brand-title">Mayara Miranda Academia</div>
+  <div class="brand-sub">Ferramentas de Gestão · Sistema Lucro Invisível™</div>
+</div>
+
+<nav class="sticky-nav">
+  <button class="tab active" onclick="showTab('painel',this)">📊 Painel Semanal</button>
+  <button class="tab" onclick="showTab('sinal',this)">🚨 Sinal Amarelo</button>
+  <button class="tab" onclick="showTab('estagiario',this)">🎓 Estagiário</button>
+  <button class="tab" onclick="showTab('calc',this)">💰 Lucro Invisível</button>
+</nav>
+
+<main class="page">
+
+<!-- PAINEL SEMANAL -->
+<section class="section active" id="painel">
+
+  <div class="card">
+    <div class="card-label"><span class="dot" style="background:var(--teal)"></span>Painel Semanal de Gestão</div>
+    <p>Preencha toda segunda-feira. O painel calcula automaticamente se você está no verde, amarelo ou vermelho em cada indicador.</p>
+
+    <div class="kpi-grid mt16">
+      <div class="kpi-item">
+        <div class="kpi-label-s">Fichas entregues em 24h</div>
+        <input class="kpi-input" id="fichasPrazo" type="number" placeholder="0" min="0" oninput="calcPainel()">
+        <div class="kpi-sub">de <input id="fichasTotal" type="number" placeholder="0" oninput="calcPainel()"> solicitadas</div>
+      </div>
+      <div class="kpi-item">
+        <div class="kpi-label-s">Micro-NPS médio</div>
+        <input class="kpi-input" id="nps" type="number" placeholder="0,0" min="0" max="5" step="0.1" oninput="calcPainel()">
+        <div class="kpi-sub">Meta: 4,5 ou mais</div>
+      </div>
+      <div class="kpi-item">
+        <div class="kpi-label-s">Alunos sumidos contactados</div>
+        <input class="kpi-input" id="contatados" type="number" placeholder="0" min="0" oninput="calcPainel()">
+        <div class="kpi-sub">Meta: mínimo 5/semana</div>
+      </div>
+      <div class="kpi-item">
+        <div class="kpi-label-s">Advertências no turno</div>
+        <input class="kpi-input" id="advertencias" type="number" placeholder="0" min="0" oninput="calcPainel()">
+        <div class="kpi-sub">Meta: zero</div>
+      </div>
+    </div>
+
+    <!-- Campo estagiário -->
+    <div class="kpi-grid" style="margin-bottom:0">
+      <div class="kpi-item estagiario" style="grid-column:1/-1">
+        <div class="kpi-label-s">📋 Fichas do estagiário validadas esta semana</div>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <input class="kpi-input" id="fichasEst" type="number" placeholder="0" min="0" style="font-size:24px" oninput="calcPainel()">
+          <span style="font-size:13px;color:var(--mag);font-weight:700">fichas revisadas por você antes da entrega</span>
+        </div>
+        <div class="kpi-sub" style="color:var(--mag)">Primeiros 30 dias: validação obrigatória antes de qualquer entrega ao aluno</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="resultadoPainel" style="display:none">
+    <div class="card-label"><span class="dot" style="background:var(--teal)"></span>Resultado da Semana</div>
+    <div id="semaforos"></div>
+    <div class="divider"></div>
+    <div id="resumoSemana" style="font-size:13px;color:var(--muted);line-height:1.7"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label"><span class="dot" style="background:var(--amber)"></span>Histórico das Últimas Semanas</div>
+    <div id="historico" style="font-size:12px;color:var(--soft)">Nenhum registro ainda.</div>
+    <div class="flex mt12">
+      <button class="btn btn-primary flex-1" onclick="salvarSemana()">Salvar semana</button>
+      <button class="btn btn-mag btn-sm" onclick="novaSemana()">Nova semana</button>
+      <button class="btn btn-ghost btn-sm" onclick="copiarResumo()">Copiar resumo</button>
+    </div>
+    <div class="nota teal mt12" style="font-size:12px">
+      💡 Toda sexta: clique em "Copiar resumo" e envie pelo WhatsApp para você mesma e para o Sherley. É sua cópia de segurança que nunca se perde.
+    </div>
+  </div>
+
+</section>
+
+<!-- SINAL AMARELO -->
+<section class="section" id="sinal">
+
+  <div class="card">
+    <div class="card-label"><span class="dot" style="background:var(--amber)"></span>Protocolo Sinal Amarelo™</div>
+    <p>Selecione o aluno e o motivo. A ferramenta gera a mensagem personalizada de resgate para enviar no WhatsApp.</p>
+
+    <div class="mt16">
+      <div class="field-group">
+        <div class="field-label">Nome do aluno</div>
+        <input class="field-input" id="alunoNome" type="text" placeholder="Ex: Ana Luíza" oninput="gerarMensagem()">
+      </div>
+      <div class="field-group">
+        <div class="field-label">Motivo do contato</div>
+        <select class="field-select" id="alunoMotivo" onchange="gerarMensagem()">
+          <option value="">Selecione o motivo...</option>
+          <option value="sumido">Aluno sumido (+7 dias sem aparecer)</option>
+          <option value="frequencia">Frequência caindo (menos de 2x/semana)</option>
+          <option value="reclamou">Reclamou na pesquisa de satisfação</option>
+          <option value="ficha">Pediu ficha e não foi atendido</option>
+          <option value="cancelou">Demonstrou intenção de cancelar</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <div class="field-label">Tempo como aluno</div>
+        <select class="field-select" id="alunoTempo" onchange="gerarMensagem()">
+          <option value="">Selecione...</option>
+          <option value="novo">Menos de 3 meses</option>
+          <option value="medio">3 a 12 meses</option>
+          <option value="veterano">Mais de 1 ano</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <div class="field-label">Horário que treina</div>
+        <select class="field-select" id="alunoHorario" onchange="gerarMensagem()">
+          <option value="">Selecione...</option>
+          <option value="manhã">Manhã</option>
+          <option value="meio-dia">Meio-dia</option>
+          <option value="tarde">Tarde</option>
+          <option value="noite">Noite</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label"><span class="dot" style="background:var(--green)"></span>Mensagem Gerada</div>
+    <div class="copy-wrap">
+      <div class="copy-toast" id="copyToast">✓ Copiado!</div>
+      <div class="msg-box empty" id="msgOutput">Preencha os campos acima para gerar a mensagem...</div>
+    </div>
+    <div class="flex mt12">
+      <button class="btn btn-green flex-1" onclick="copiarMensagem()" id="btnCopiar" disabled>Copiar mensagem</button>
+      <button class="btn btn-ghost btn-sm" onclick="abrirWhatsApp()" id="btnWpp" disabled>Abrir WhatsApp</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label"><span class="dot" style="background:var(--red)"></span>Rotina da Sexta — Passo a Passo</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="sem amber">
+        <span class="sem-icon">1️⃣</span>
+        <div class="sem-info"><div class="sem-name">Puxar a lista</div><div class="sem-detail">Next Fit → Frequência → alunos com +7 dias sem aparecer</div></div>
+      </div>
+      <div class="sem amber">
+        <span class="sem-icon">2️⃣</span>
+        <div class="sem-info"><div class="sem-name">Mensagem individual</div><div class="sem-detail">Com o nome da pessoa. Nunca lista de transmissão — o aluno percebe e ignora</div></div>
+      </div>
+      <div class="sem green">
+        <span class="sem-icon">3️⃣</span>
+        <div class="sem-info"><div class="sem-name">Começar pela pessoa</div><div class="sem-detail">"Senti sua falta essa semana, tá tudo bem?" abre porta. "Você sumiu" fecha</div></div>
+      </div>
+      <div class="sem teal" style="background:var(--tealSoft);border-color:rgba(0,124,120,.15)">
+        <span class="sem-icon">4️⃣</span>
+        <div class="sem-info"><div class="sem-name" style="color:var(--tealDark)">Marcar no painel</div><div class="sem-detail">Quantos contactados. Quem voltar → Mural dos Frequentes</div></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ESTAGIÁRIO -->
+<section class="section" id="estagiario">
+
+  <div class="card">
+    <div class="card-label"><span class="dot" style="background:var(--mag)"></span>Protocolo do Estagiário — Primeiros 30 Dias</div>
+    <p>Os primeiros 30 dias formam o padrão operacional dele para os próximos meses. Marque o que já foi executado.</p>
+  </div>
+
+  <div class="card" id="checklistCard">
+    <div class="check-week">Semana 1 — Estrutura</div>
+    <div id="checklists"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label"><span class="dot" style="background:var(--amber)"></span>Avaliação Semanal do Estagiário</div>
+    <p style="margin-bottom:14px">Registre sua observação da semana. Vai para o histórico.</p>
+    <div class="field-group">
+      <div class="field-label">Semana</div>
+      <select class="field-select" id="estSemana">
+        <option value="1">Semana 1</option>
+        <option value="2">Semana 2</option>
+        <option value="3">Semana 3</option>
+        <option value="4">Semana 4</option>
+      </select>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div>
+        <div class="field-label">Celular no turno?</div>
+        <select class="field-select" id="estCelular">
+          <option value="ok">✅ Não usou</option>
+          <option value="1x">⚠️ 1 vez</option>
+          <option value="varias">🔴 Várias vezes</option>
+        </select>
+      </div>
+      <div>
+        <div class="field-label">Proatividade</div>
+        <select class="field-select" id="estProativ">
+          <option value="ok">✅ Antecipou atendimento</option>
+          <option value="medio">⚠️ Só quando chamado</option>
+          <option value="ruim">🔴 Passivo</option>
+        </select>
+      </div>
+      <div>
+        <div class="field-label">Fichas entregues</div>
+        <select class="field-select" id="estFichas">
+          <option value="ok">✅ Todas em 24h</option>
+          <option value="atraso">⚠️ Com atraso</option>
+          <option value="sem">🔴 Ficou sem ficha</option>
+        </select>
+      </div>
+      <div>
+        <div class="field-label">Postura (circulando)</div>
+        <select class="field-select" id="estPostura">
+          <option value="ok">✅ Circulando ativamente</option>
+          <option value="medio">⚠️ Parado às vezes</option>
+          <option value="ruim">🔴 Parado ou sentado</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-group">
+      <div class="field-label">Observação da semana (opcional)</div>
+      <textarea class="field-textarea" id="estObs" placeholder="Ex: Abordou bem a aluna nova na zona A..." style="min-height:70px"></textarea>
+    </div>
+    <button class="btn btn-primary" onclick="salvarEstagiario()">Salvar avaliação</button>
+  </div>
+
+  <div class="card">
+    <div class="card-label"><span class="dot" style="background:var(--teal)"></span>Histórico de Avaliações</div>
+    <div id="histEstagiario" style="font-size:12px;color:var(--soft)">Nenhuma avaliação registrada.</div>
+  </div>
+
+</section>
+
+<!-- CALCULADORA LUCRO INVISÍVEL -->
+<section class="section" id="calc">
+
+  <div class="card">
+    <div class="card-label"><span class="dot" style="background:var(--teal)"></span>Dados da Academia</div>
+    <div class="kpi-grid">
+      <div class="kpi-item">
+        <div class="kpi-label-s">Total de alunos ativos</div>
+        <input class="kpi-input" id="totalAlunos" type="number" value="168" oninput="calcLucro()">
+      </div>
+      <div class="kpi-item">
+        <div class="kpi-label-s">Ticket médio (R$)</div>
+        <input class="kpi-input" id="ticket" type="number" value="126" oninput="calcLucro()">
+      </div>
+    </div>
+    <div class="field-group mt12">
+      <div class="field-label">Churn do mês — <strong id="churnValDisplay" style="color:var(--amber)">15,5%</strong></div>
+      <input type="range" id="churnRange" min="1" max="50" value="15.5" step="0.1" oninput="syncChurn(this.value)">
+      <div class="range-labels"><span>1% — ótimo</span><span style="color:var(--teal);font-weight:800">META: 10%</span><span>50% — crítico</span></div>
+    </div>
+  </div>
+
+  <div class="calc-hero" id="calcHero">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
+      <div>
+        <div class="calc-big" id="perdaMensal">R$ 0</div>
+        <div class="sub">perdidos por evasão este mês</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:28px;font-weight:800;letter-spacing:-1px" id="alunosPerdidos">0</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.65)">alunos saindo</div>
+      </div>
+    </div>
+    <div class="calc-grid3">
+      <div class="calc-mini">
+        <div class="calc-mini-val" id="perdaAnual">R$ 0</div>
+        <div class="calc-mini-label">perda anual</div>
+      </div>
+      <div class="calc-mini">
+        <div class="calc-mini-val" id="metaChurn">R$ 0</div>
+        <div class="calc-mini-label">recuperável (meta 10%)</div>
+      </div>
+      <div class="calc-mini" style="background:rgba(255,255,255,.18)">
+        <div class="calc-mini-val" id="perdaAcum">R$ 0</div>
+        <div class="calc-mini-label">perda acumulada 5 meses</div>
+      </div>
+    </div>
+    <div class="note" id="churnNota"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label"><span class="dot" style="background:var(--green)"></span>Contexto — Histórico de Evasão</div>
+    <table class="tbl">
+      <tr><th>Mês</th><th>Desistentes</th><th>Churn</th><th>Perda</th></tr>
+      <tr><td>Janeiro</td><td>18</td><td>12,2%</td><td>R$ 2.268</td></tr>
+      <tr><td>Fevereiro</td><td>25</td><td>17,0%</td><td>R$ 2.500</td></tr>
+      <tr><td>Março</td><td>26</td><td>17,7%</td><td>R$ 2.678</td></tr>
+      <tr><td>Abril</td><td>29</td><td>18,2%</td><td>R$ 3.654</td></tr>
+      <tr><td style="color:var(--green)">Maio ✅</td><td style="color:var(--green)">26</td><td style="color:var(--green)">15,5%</td><td style="color:var(--green)">R$ 3.276</td></tr>
+    </table>
+    <div class="nota green mt12">
+      ✅ Maio foi a 1ª queda em 5 meses. Resultado direto dos 44 contatos do Sinal Amarelo™. Quando o protocolo é executado, o número aparece.
+    </div>
+  </div>
+
+</section>
+
+</main>
+
+<div class="footer">
+  <div class="footer-line"></div>
+  <b>Ecossistema IA Fitness™</b> · Sistema Lucro Invisível™ · Consultor Sherley Ferreira · Mayara Miranda Academia · Junho 2026
+</div>
+
+<script>
+// TABS
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// PAINEL
+function calcPainel() {
+  const prazo = parseInt(document.getElementById('fichasPrazo').value) || 0;
+  const total = parseInt(document.getElementById('fichasTotal').value) || 0;
+  const nps = parseFloat(document.getElementById('nps').value) || 0;
+  const contatados = parseInt(document.getElementById('contatados').value) || 0;
+  const adv = parseInt(document.getElementById('advertencias').value) || 0;
+
+  if (!total && !nps && !contatados && !adv) {
+    document.getElementById('resultadoPainel').style.display = 'none';
+    return;
+  }
+  document.getElementById('resultadoPainel').style.display = 'block';
+
+  const tefPct = total > 0 ? (prazo / total * 100) : 100;
+  const tef = tefPct >= 100 ? 'green' : tefPct >= 80 ? 'amber' : 'red';
+  const np = nps >= 4.5 ? 'green' : nps >= 3.5 ? 'amber' : (nps > 0 ? 'red' : 'amber');
+  const ct = contatados >= 5 ? 'green' : contatados >= 3 ? 'amber' : 'red';
+  const av = adv === 0 ? 'green' : adv <= 1 ? 'amber' : 'red';
+  const lbl = { green: '✅ No alvo', amber: '⚠️ Atenção', red: '🔴 Crítico' };
+
+  document.getElementById('semaforos').innerHTML = `
+    <div class="sem ${tef}">
+      <span class="sem-icon">📋</span>
+      <div class="sem-info"><div class="sem-name">Fichas no prazo (TEF)</div><div class="sem-detail">Meta: 100% em 24h</div></div>
+      <div style="text-align:right"><div class="sem-val">${total > 0 ? Math.round(tefPct) + '%' : '—'}</div><span class="sem-badge">${lbl[tef]}</span></div>
+    </div>
+    <div class="sem ${np}">
+      <span class="sem-icon">⭐</span>
+      <div class="sem-info"><div class="sem-name">Micro-NPS de atenção</div><div class="sem-detail">Meta: 4,5 ou mais</div></div>
+      <div style="text-align:right"><div class="sem-val">${nps > 0 ? nps.toFixed(1) : '—'}</div><span class="sem-badge">${lbl[np]}</span></div>
+    </div>
+    <div class="sem ${ct}">
+      <span class="sem-icon">📞</span>
+      <div class="sem-info"><div class="sem-name">Alunos sumidos contactados</div><div class="sem-detail">Meta: 5 por semana</div></div>
+      <div style="text-align:right"><div class="sem-val">${contatados}</div><span class="sem-badge">${lbl[ct]}</span></div>
+    </div>
+    <div class="sem ${av}">
+      <span class="sem-icon">🚨</span>
+      <div class="sem-info"><div class="sem-name">Advertências no turno</div><div class="sem-detail">Meta: zero</div></div>
+      <div style="text-align:right"><div class="sem-val">${adv}</div><span class="sem-badge">${lbl[av]}</span></div>
+    </div>
+  `;
+
+  const reds = [tef, np, ct, av].filter(s => s === 'red').length;
+  const ambers = [tef, np, ct, av].filter(s => s === 'amber').length;
+  let resumo = '';
+  if (reds === 0 && ambers === 0) resumo = '🏆 Semana excelente! Todos os indicadores no alvo. Reconheça a equipe na reunião do mês.';
+  else if (reds === 0) resumo = `⚠️ ${ambers} indicador(es) em atenção. Nenhum crítico — monitore de perto essa semana.`;
+  else if (reds === 1) resumo = '🔴 1 indicador crítico esta semana. Ação corretiva antes da sexta.';
+  else resumo = `🚨 ${reds} indicadores críticos. Semana de intervenção — conversa com a equipe.`;
+  document.getElementById('resumoSemana').textContent = resumo;
+}
+
+function salvarSemana() {
+  const semana = new Date().toLocaleDateString('pt-BR');
+  const h = JSON.parse(localStorage.getItem('hs_mm') || '[]');
+  h.unshift({
+    s: semana,
+    p: document.getElementById('fichasPrazo').value || '—',
+    n: document.getElementById('nps').value || '—',
+    c: document.getElementById('contatados').value || '—',
+    e: document.getElementById('fichasEst').value || '—',
+  });
+  if (h.length > 8) h.pop();
+  localStorage.setItem('hs_mm', JSON.stringify(h));
+  renderHistorico();
+  const btn = event.target;
+  btn.textContent = '✓ Salvo!';
+  setTimeout(() => btn.textContent = 'Salvar semana', 2000);
+}
+
+function renderHistorico() {
+  const h = JSON.parse(localStorage.getItem('hs_mm') || '[]');
+  const el = document.getElementById('historico');
+  if (!h.length) { el.textContent = 'Nenhum registro ainda.'; return; }
+  el.innerHTML = h.map(r => `
+    <div class="hist-item">
+      <span class="hist-date">${r.s}</span>
+      <span class="badge teal">TEF: ${r.p}</span>
+      <span class="badge amber">NPS: ${r.n}</span>
+      <span class="badge green">Contatos: ${r.c}</span>
+      <span class="badge mag">Est.: ${r.e}</span>
+    </div>
+  `).join('');
+}
+
+function novaSemana() {
+  ['fichasPrazo','fichasTotal','nps','contatados','advertencias','fichasEst'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('resultadoPainel').style.display = 'none';
+  const btn = document.querySelector('[onclick="novaSemana()"]');
+  btn.textContent = '✓ Zerado!';
+  setTimeout(() => btn.textContent = 'Nova semana', 2000);
+}
+
+function copiarResumo() {
+  const semana = new Date().toLocaleDateString('pt-BR');
+  const p = document.getElementById('fichasPrazo').value || '—';
+  const pt = document.getElementById('fichasTotal').value || '—';
+  const n = document.getElementById('nps').value || '—';
+  const c = document.getElementById('contatados').value || '—';
+  const a = document.getElementById('advertencias').value || '—';
+  const e = document.getElementById('fichasEst').value || '—';
+  const txt = `📊 PAINEL SEMANAL — Mayara Miranda Academia\n📅 ${semana}\n\n` +
+    `📋 Fichas no prazo: ${p} de ${pt}\n` +
+    `⭐ Micro-NPS: ${n}\n` +
+    `📞 Sumidos contactados: ${c}\n` +
+    `🚨 Advertências: ${a}\n` +
+    `🎓 Fichas estagiário validadas: ${e}\n\n` +
+    `Sistema Lucro Invisível™ · Sherley Ferreira`;
+  navigator.clipboard.writeText(txt).then(() => {
+    const btn = event.target;
+    btn.textContent = '✓ Copiado!';
+    setTimeout(() => btn.textContent = 'Copiar resumo', 2000);
+  });
+}
+
+// SINAL AMARELO
+const msgs = {
+  sumido: {
+    novo: (n,h) => `Oi, ${n}! Tudo bem? 😊\n\nAqui é a Mayara da academia.\n\nNotei que faz alguns dias que não te vejo por aqui no horário da ${h}. Queria só saber se está tudo bem com você.\n\nQualquer ajuste no treino ou dúvida, é só me falar. Te esperamos de volta! 💪`,
+    medio: (n,h) => `Oi, ${n}! Como você está? 😊\n\nAqui é a Mayara.\n\nFaz um tempinho que não te vejo no horário da ${h}. Você está bem?\n\nSua presença faz diferença por aqui. Se precisar de qualquer coisa — treino, horário, o que for — é só me falar. 💪`,
+    veterano: (n,h) => `Oi, ${n}! Tudo bem? 😊\n\nAqui é a Mayara.\n\nFaz um tempo que sinto sua falta no horário da ${h}. Com todo esse tempo juntos, sei o quanto o treino faz parte da sua rotina.\n\nQueria saber se está tudo bem. Sua presença é muito importante para nós. Te espero de volta! 💪`,
+  },
+  frequencia: {
+    novo: (n,h) => `Oi, ${n}! Aqui é a Mayara. 😊\n\nNotei que você treinou menos vezes essa semana no horário da ${h}. Queria checar se está tudo bem e se o treino está adequado pra você.\n\nSe precisar de qualquer ajuste, fala comigo! 💪`,
+    medio: (n,h) => `Oi, ${n}! Aqui é a Mayara. 😊\n\nNotei que sua frequência caiu um pouco nas últimas semanas no horário da ${h}. Sei que a rotina complica — queria saber se tem alguma coisa que posso ajustar pra te ajudar. Fala comigo! 💪`,
+    veterano: (n,h) => `Oi, ${n}! Aqui é a Mayara. 😊\n\nVocê é muito especial pra gente e notei que sua frequência caiu no horário da ${h}. Queria entender se está tudo bem e se há algo que posso melhorar. Fala comigo! 💪`,
+  },
+  reclamou: {
+    novo: (n,h) => `Oi, ${n}! Aqui é a Mayara, da academia. 😊\n\nVi seu feedback na nossa pesquisa e quero te agradecer por ser honesto(a). Seu retorno é muito valioso.\n\nGostaria de conversar sobre sua experiência no horário da ${h}. Quando tiver um momento, me chama! 🙏`,
+    medio: (n,h) => `Oi, ${n}! Aqui é a Mayara. 😊\n\nLi seu feedback na pesquisa e fiquei feliz que você tenha compartilhado — é assim que crescemos.\n\nQuero entender melhor sua experiência no horário da ${h}. Pode me contar um pouco mais? 🙏`,
+    veterano: (n,h) => `Oi, ${n}! Aqui é a Mayara. 😊\n\nLi seu feedback e fiquei preocupada. Você está conosco há bastante tempo e sua opinião vale muito.\n\nQuero muito conversar sobre sua experiência no horário da ${h}. Quando puder, me chama! 🙏`,
+  },
+  ficha: {
+    novo: (n,h) => `Oi, ${n}! Aqui é a Mayara. 😊\n\nFiquei sabendo que você pediu uma ficha e ainda não foi atendido(a) no horário da ${h}. Peço desculpas!\n\nVou resolver isso hoje. Qual o melhor horário pra você receber sua ficha? 💪`,
+    medio: (n,h) => `Oi, ${n}! Aqui é a Mayara. 😊\n\nFiquei sabendo que seu pedido de ficha ficou sem resposta no horário da ${h}. Isso não é aceitável — peço desculpas.\n\nVou garantir que você receba em até 24 horas. Pode contar comigo! 💪`,
+    veterano: (n,h) => `Oi, ${n}! Aqui é a Mayara. 😊\n\nFiquei sabendo que você pediu atualização de ficha no horário da ${h} e não foi atendido(a). Com todo o tempo que estamos juntos, isso não deveria ter acontecido — peço desculpas.\n\nEstou resolvendo com prioridade agora. Obrigada pela paciência! 💪`,
+  },
+  cancelou: {
+    novo: (n,h) => `Oi, ${n}! Aqui é a Mayara. 😊\n\nSoube que você está pensando em encerrar sua matrícula e queria conversar antes disso.\n\nVocê está conosco há pouco tempo no horário da ${h} e quero muito entender o que aconteceu. Pode me contar? 🙏`,
+    medio: (n,h) => `Oi, ${n}! Aqui é a Mayara. 😊\n\nFiquei sabendo que você está pensando em cancelar e queria conversar antes.\n\nSua presença no horário da ${h} é muito importante pra nós. Me conta o que aconteceu? 🙏`,
+    veterano: (n,h) => `Oi, ${n}! Aqui é a Mayara. 😊\n\nFiquei sabendo que você está pensando em cancelar e fiquei muito preocupada. Com todo o tempo que estamos juntos no horário da ${h}, sua história aqui importa demais.\n\nAntes de qualquer decisão, me conta o que aconteceu? Quero encontrar uma solução juntos. 🙏`,
+  },
+};
+
+function gerarMensagem() {
+  const nome = document.getElementById('alunoNome').value.trim();
+  const motivo = document.getElementById('alunoMotivo').value;
+  const tempo = document.getElementById('alunoTempo').value;
+  const horario = document.getElementById('alunoHorario').value || 'manhã';
+  const out = document.getElementById('msgOutput');
+  const bc = document.getElementById('btnCopiar');
+  const bw = document.getElementById('btnWpp');
+  if (!nome || !motivo || !tempo) {
+    out.className = 'msg-box empty';
+    out.textContent = 'Preencha os campos acima para gerar a mensagem...';
+    bc.disabled = true; bw.disabled = true; return;
+  }
+  const fn = msgs[motivo]?.[tempo];
+  if (!fn) return;
+  out.className = 'msg-box';
+  out.textContent = fn(nome, horario);
+  bc.disabled = false; bw.disabled = false;
+}
+
+function copiarMensagem() {
+  const t = document.getElementById('copyToast');
+  navigator.clipboard.writeText(document.getElementById('msgOutput').textContent)
+    .then(() => { t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); });
+}
+
+function abrirWhatsApp() {
+  window.open('https://wa.me/?text=' + encodeURIComponent(document.getElementById('msgOutput').textContent), '_blank');
+}
+
+// ESTAGIÁRIO
+const checkItems = [
+  { semana: 1, texto: 'Apresentou os 5 combinados ao estagiário com supervisor presente' },
+  { semana: 1, texto: 'Mostrou a Regra dos 3 Passos na prática (demonstração no salão)' },
+  { semana: 1, texto: 'Criou ponto de guarda de celulares — estagiário informado' },
+  { semana: 1, texto: 'Definiu Zona A para o estagiário — apenas observação na semana 1' },
+  { semana: 2, texto: 'Estagiário aplicou a Regra dos 3 Passos com supervisão' },
+  { semana: 2, texto: 'Validou todas as fichas montadas pelo estagiário antes da entrega' },
+  { semana: 2, texto: 'Realizou primeira passagem de turno com estagiário presente' },
+  { semana: 2, texto: 'Auditou comportamento de celular do estagiário em ao menos 1 turno' },
+  { semana: 3, texto: 'Delegou Zona A ao estagiário com supervisão reduzida' },
+  { semana: 3, texto: 'Verificou Micro-NPS do turno onde estagiário atuou' },
+  { semana: 3, texto: 'Identificou alunos veteranos (+45 dias) para Check-in de Performance' },
+  { semana: 3, texto: 'Confirmou que nenhuma ficha do estagiário passou de 24h' },
+  { semana: 4, texto: 'Realizou conversa individual de avaliação com o estagiário' },
+  { semana: 4, texto: 'Pontos avaliados: celular, postura, proatividade, fichas' },
+  { semana: 4, texto: 'Ajuste de comportamento feito (se necessário) antes de virar hábito' },
+  { semana: 4, texto: 'Reconheceu publicamente pontos positivos do estagiário na reunião' },
+];
+
+function renderChecklist() {
+  const done = JSON.parse(localStorage.getItem('check_est') || '[]');
+  let semAtual = 0;
+  let html = '';
+  checkItems.forEach((item, i) => {
+    if (item.semana !== semAtual) {
+      if (semAtual > 0) html += '</div>';
+      semAtual = item.semana;
+      const labels = ['','Semana 1 — Estrutura','Semana 2 — Execução','Semana 3 — Ajuste','Semana 4 — Consolidação'];
+      html += `<div class="check-week">${labels[semAtual]}</div><div>`;
+    }
+    const isDone = done.includes(i);
+    html += `<div class="check-item ${isDone ? 'done' : ''}" onclick="toggleCheck(${i})">
+      <div class="check-box">${isDone ? '✓' : ''}</div>
+      <div class="check-text">${item.texto}</div>
+    </div>`;
+  });
+  html += '</div>';
+  document.getElementById('checklists').innerHTML = html;
+  const total = checkItems.length;
+  const feitos = done.length;
+  document.querySelector('#checklistCard .card-label').innerHTML =
+    `<span class="dot" style="background:var(--mag)"></span>Checklist — ${feitos}/${total} concluídos`;
+}
+
+function toggleCheck(i) {
+  const done = JSON.parse(localStorage.getItem('check_est') || '[]');
+  const idx = done.indexOf(i);
+  if (idx >= 0) done.splice(idx, 1); else done.push(i);
+  localStorage.setItem('check_est', JSON.stringify(done));
+  renderChecklist();
+}
+
+function salvarEstagiario() {
+  const semana = document.getElementById('estSemana').value;
+  const data = new Date().toLocaleDateString('pt-BR');
+  const cel = document.getElementById('estCelular').value;
+  const pro = document.getElementById('estProativ').value;
+  const fic = document.getElementById('estFichas').value;
+  const pos = document.getElementById('estPostura').value;
+  const obs = document.getElementById('estObs').value;
+
+  const h = JSON.parse(localStorage.getItem('hist_est') || '[]');
+  h.unshift({ semana, data, cel, pro, fic, pos, obs });
+  if (h.length > 12) h.pop();
+  localStorage.setItem('hist_est', JSON.stringify(h));
+  renderHistEstagiario();
+  document.getElementById('estObs').value = '';
+  const btn = event.target;
+  btn.textContent = '✓ Salvo!';
+  setTimeout(() => btn.textContent = 'Salvar avaliação', 2000);
+}
+
+function renderHistEstagiario() {
+  const h = JSON.parse(localStorage.getItem('hist_est') || '[]');
+  const el = document.getElementById('histEstagiario');
+  if (!h.length) { el.textContent = 'Nenhuma avaliação registrada.'; return; }
+  const emojis = { ok: '✅', medio: '⚠️', atraso: '⚠️', ruim: '🔴', sem: '🔴', '1x': '⚠️', varias: '🔴' };
+  el.innerHTML = h.map(r => `
+    <div class="hist-item" style="flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;gap:8px;width:100%;align-items:center">
+        <span class="badge mag">Semana ${r.semana}</span>
+        <span class="hist-date" style="width:auto">${r.data}</span>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span class="badge ${r.cel==='ok'?'green':r.cel==='1x'?'amber':'red'}">${emojis[r.cel]} Celular</span>
+        <span class="badge ${r.pro==='ok'?'green':r.pro==='medio'?'amber':'red'}">${emojis[r.pro]} Proatividade</span>
+        <span class="badge ${r.fic==='ok'?'green':r.fic==='atraso'?'amber':'red'}">${emojis[r.fic]} Fichas</span>
+        <span class="badge ${r.pos==='ok'?'green':r.pos==='medio'?'amber':'red'}">${emojis[r.pos]} Postura</span>
+      </div>
+      ${r.obs ? `<div style="font-size:12px;color:var(--muted);font-style:italic">"${r.obs}"</div>` : ''}
+    </div>
+  `).join('');
+}
+
+// CALCULADORA
+function fmt(n) { return 'R$ ' + Math.round(n).toLocaleString('pt-BR'); }
+
+function syncChurn(v) {
+  document.getElementById('churnValDisplay').textContent = parseFloat(v).toFixed(1) + '%';
+  calcLucro();
+}
+
+function calcLucro() {
+  const alunos = parseInt(document.getElementById('totalAlunos').value) || 168;
+  const ticket = parseInt(document.getElementById('ticket').value) || 126;
+  const churn = parseFloat(document.getElementById('churnRange').value) || 15.5;
+  const perdidos = Math.round(alunos * churn / 100);
+  const perdaMensal = perdidos * ticket;
+  const perdaAnual = perdaMensal * 12;
+  const alunos10 = Math.round(alunos * 0.10);
+  const recuperavel = Math.max(0, (perdidos - alunos10) * ticket);
+  const perdaAcum = (18 + 25 + 26 + 29 + 26) * ticket;
+
+  document.getElementById('alunosPerdidos').textContent = perdidos;
+  document.getElementById('perdaMensal').textContent = fmt(perdaMensal);
+  document.getElementById('perdaAnual').textContent = fmt(perdaAnual);
+  document.getElementById('metaChurn').textContent = fmt(recuperavel);
+  document.getElementById('perdaAcum').textContent = fmt(perdaAcum);
+
+  const nota = churn <= 10 ? '✅ Churn controlado — você está no alvo' :
+               churn <= 15 ? '⚠️ Churn em queda — continuar o protocolo' :
+               churn <= 20 ? '⚠️ Churn ainda elevado — ação necessária esta semana' :
+               '🔴 Churn crítico — intervenção imediata com a equipe';
+  document.getElementById('churnNota').textContent = nota;
+}
+
+// INIT
+calcLucro();
+renderHistorico();
+renderChecklist();
+renderHistEstagiario();
+</script>
+</body>
+</html>
